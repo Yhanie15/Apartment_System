@@ -7,27 +7,60 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Check if a specific unit number is passed
+$previous_reading = 0; // Default value for previous reading
+$is_first_time = true; // Assume it's the first time calculating the bill
+
+// Check if a unit number is provided in the GET request
 if (isset($_GET['unit_number'])) {
     $unit_number = $_GET['unit_number'];
 
+    // Fetch the most recent current reading from the previous calculations
+    $latest_reading_sql = "
+        SELECT current_reading 
+        FROM water_calculations 
+        WHERE unit_number = ? 
+        ORDER BY STR_TO_DATE(calculation_month, '%M %Y') DESC, meter_read_date DESC 
+        LIMIT 1
+    ";
+    $stmt = $conn->prepare($latest_reading_sql);
+    $stmt->bind_param('s', $unit_number);
+    $stmt->execute();
+    $stmt->bind_result($previous_reading);
+    if ($stmt->fetch()) {
+        $is_first_time = false; // A record exists; it's not the first time
+    }
+    $stmt->close();
+
     // Fetch payment history for the unit
-    $sql = "SELECT * FROM water_payment_history WHERE unit_number = '$unit_number' ORDER BY payment_date DESC";
-    $result = $conn->query($sql);
+    $payment_sql = "
+        SELECT * FROM water_payment_history 
+        WHERE unit_number = ? 
+        ORDER BY payment_date DESC
+    ";
+    $stmt = $conn->prepare($payment_sql);
+    $stmt->bind_param('s', $unit_number);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
     // Fetch water calculations for the unit (remaining unpaid months)
-    // Exclude already paid months
     $calculation_sql = "
         SELECT * FROM water_calculations 
-        WHERE unit_number = '$unit_number' 
+        WHERE unit_number = ? 
         AND calculation_month NOT IN (
-            SELECT month_of FROM water_payment_history WHERE unit_number = '$unit_number'
+            SELECT month_of FROM water_payment_history WHERE unit_number = ?
         )
-        ORDER BY calculation_month DESC
+        ORDER BY STR_TO_DATE(calculation_month, '%M %Y') DESC, meter_read_date DESC
     ";
-    $calculation_result = $conn->query($calculation_sql);
+    $stmt = $conn->prepare($calculation_sql);
+    $stmt->bind_param('ss', $unit_number, $unit_number);
+    $stmt->execute();
+    $calculation_result = $stmt->get_result();
 }
 ?>
+
+
+
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -57,9 +90,11 @@ if (isset($_GET['unit_number'])) {
                 <thead>
                     <tr>
                         <th>Calculation Month</th>
-                        <th>Water Rate (PHP per gallon)</th>
-                        <th>Water Consumption (gallons)</th>
-                        <th>Water Bill (PHP)</th>
+                        <th>Previous Reading</th>
+                        <th>Current Reading</th>
+                        <th>Total Consumption (gallons)</th>
+                        <th>Water Rate</th>
+                        <th>Total Bill</th>
                         <th>Meter Read Date</th>
                     </tr>
                 </thead>
@@ -67,9 +102,11 @@ if (isset($_GET['unit_number'])) {
                     <?php while ($calculation_row = $calculation_result->fetch_assoc()): ?>
                         <tr>
                             <td><?php echo htmlspecialchars($calculation_row['calculation_month']); ?></td>
+                            <td><?php echo htmlspecialchars($calculation_row['previous_reading']); ?></td>
+                            <td><?php echo htmlspecialchars($calculation_row['current_reading']); ?></td>
+                            <td><?php echo htmlspecialchars($calculation_row['current_reading'] - $calculation_row['previous_reading']); ?></td>
                             <td>PHP <?php echo number_format($calculation_row['water_rate'], 2); ?></td>
-                            <td><?php echo htmlspecialchars($calculation_row['water_consumption']); ?></td>
-                            <td>PHP <?php echo number_format($calculation_row['water_bill'], 2); ?></td>
+                            <td>PHP <?php echo number_format(($calculation_row['current_reading'] - $calculation_row['previous_reading']) * $calculation_row['water_rate'], 2); ?></td>
                             <td><?php echo htmlspecialchars($calculation_row['meter_read_date']); ?></td>
                         </tr>
                     <?php endwhile; ?>
@@ -77,7 +114,7 @@ if (isset($_GET['unit_number'])) {
             </table>
         <?php else: ?>
             <p>No water bill calculations available for Unit <?php echo htmlspecialchars($unit_number); ?>.</p>
-        <?php endif; ?> 
+        <?php endif; ?>
 
         <h3>Payment History</h3>
         <?php if ($result && $result->num_rows > 0): ?>
@@ -87,6 +124,7 @@ if (isset($_GET['unit_number'])) {
                         <th>#</th>
                         <th>Date Time Added</th>
                         <th>Month Of</th>
+                        <th>Total Bill</th>
                         <th>Amount Paid</th>
                     </tr>
                 </thead>
@@ -98,6 +136,7 @@ if (isset($_GET['unit_number'])) {
                             <td><?php echo $counter++; ?></td>
                             <td><?php echo htmlspecialchars($row['payment_date']); ?></td>
                             <td><?php echo htmlspecialchars($row['month_of']); ?></td>
+                            <td>PHP <?php echo number_format($row['total_bill'], 2); ?></td>
                             <td>PHP <?php echo number_format($row['amount_paid'], 2); ?></td>
                         </tr>
                     <?php endwhile; ?>
@@ -113,24 +152,37 @@ if (isset($_GET['unit_number'])) {
     <div class="modal-content">
         <h3>Calculate Water for Room <?php echo htmlspecialchars($unit_number); ?></h3>
         <form method="POST" action="compute_water.php">
-            <label>Unit Number:</label>
-            <input type="text" name="unit_number" value="<?php echo htmlspecialchars($unit_number); ?>" required><br>
+    <label>Unit Number:</label>
+    <input type="text" name="unit_number" value="<?php echo htmlspecialchars($unit_number); ?>" readonly required><br>
 
-            <label>Water Rate (PHP per gallon):</label>
-            <input type="text" name="water_rate" required><br>
+    <label>Previous Reading:</label>
+    <input 
+        type="number" 
+        name="previous_reading" 
+        value="<?php echo htmlspecialchars($previous_reading); ?>" 
+        <?php echo $is_first_time ? '' : 'readonly'; ?> 
+        step="0.01" 
+        required
+    ><br>
 
-            <label>Water Consumption (gallons):</label>
-            <input type="text" name="water_consumption" required><br>
+    <label>Current Reading:</label>
+    <input type="number" name="current_reading" step="0.01" required><br>
 
-            <label>Meter Read Date:</label>
-            <input type="date" name="meter_read_date" required><br>
+    <label>Water Rate (PHP per gallon):</label>
+    <input type="number" name="water_rate" step="0.01" required><br>
 
-            <!-- Add month picker for Calculation Month -->
-            <label>Calculation Month:</label>
-            <input type="month" name="calculation_month" required><br>
+    <label>Meter Read Date:</label>
+    <input type="date" name="meter_read_date" required><br>
 
-            <button type="submit" class="green-button">Calculate</button>
-        </form>
+    <label>Calculation Month:</label>
+    <input type="month" name="calculation_month" required><br>
+
+    <button type="submit" class="green-button">Calculate</button>
+</form>
+
+
+
+
         <button class="back-button" onclick="closeModal('computeModal')">Back to Water</button>
     </div>
 </div>
