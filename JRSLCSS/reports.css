@@ -1,0 +1,78 @@
+/* Ensure main content has padding to not stretch to edges */
+.main-content {
+    padding: 30px;
+    margin-top: 30px;
+    /*margin-right: 250px;*/
+    max-width: 1200px; /* Keeps content centered with margins */
+    background-color: #fff;
+    border-radius: 10px; /* Gives content a nice rounded effect */
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Style for the report grid */
+.report-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Two columns */
+    gap: 20px;
+}
+
+/* Individual report cards with gradient */
+.report-card {
+    padding: 50px;
+    border-radius: 10px;
+    color: #fff;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.report-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Gradient backgrounds */
+.report-card:nth-child(1) {
+    background: linear-gradient(135deg, #ff7e5f, #feb47b); /* Orange/Red gradient */
+}
+
+.report-card:nth-child(2) {
+    background: linear-gradient(135deg, #6a11cb, #2575fc); /* Purple/Blue gradient */
+}
+
+.report-card:nth-child(3) {
+    background: linear-gradient(135deg, #11998e, #38ef7d); /* Green gradient */
+}
+
+.report-card:nth-child(4) {
+    background: linear-gradient(135deg, #4b79a1, #283e51); /* Gray/Blue gradient */
+}
+
+/* Media query for responsive design */
+@media (max-width: 768px) {
+    .report-grid {
+        grid-template-columns: 1fr; /* Stack the cards on smaller screens */
+    }
+}
+
+.report-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.report-table th, .report-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+.report-table th {
+    background-color: #f2f2f2;
+    text-align: left;
+}
+
+.report-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}

@@ -1,0 +1,266 @@
+.back-link {
+    color: #555;
+    font-size: 16px;
+    text-decoration: none;
+    display: inline-block;
+    margin-bottom: 15px;
+}
+
+.back-link i {
+    margin-right: 5px;
+}
+
+.room-container {
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.room-info {
+    margin-bottom: 20px;
+    position: relative;
+    border: 1px solid #ccc;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+/* Align Room Information and Edit Room button in the same row */
+.room-info h2 {
+    display: inline-block;
+    margin: 0;
+    color: #333;
+}
+
+/* Flex container for Room Information title and Edit button */
+.room-info-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.button.edit-room {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+/* Align Room Information details */
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.info-item {
+    flex-basis: 30%;
+    padding: 15px;
+    background-color: #fafafa;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+}
+
+.info-item i {
+    display: block;
+    font-size: 30px;
+    color: #5a5a5a;
+    margin-bottom: 10px;
+}
+
+.info-item p {
+    margin: 0;
+    font-size: 18px;
+    color: #555;
+}
+
+/* Tenant Information styling */
+.tenant-info {
+    margin-bottom: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table th, table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+table th {
+    background-color: #f4f4f9;
+    color: #333;
+}
+
+table td {
+    background-color: #fff;
+}
+
+table tr:hover {
+    background-color: #f1f1f1;
+}
+
+.button.edit-tenant {
+    background-color: #ffc107;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 14px;
+    text-align: center;
+    display: inline-block;
+}
+
+/* Modal Overlay */
+.modal {
+    display: none; 
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6); /* Darker overlay for focus */
+    overflow: auto; /* Enable scroll if content is too long */
+}
+
+/* Modal Content */
+.modal-content {
+    background: linear-gradient(145deg, #ffffff, #f0f0f0); /* Subtle gradient background */
+    margin: 80px auto;
+    padding: 30px 40px;
+    border-radius: 15px;
+    width: 450px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Enhanced shadow */
+    position: relative;
+    max-width: 95%; /* Ensures it's responsive on smaller screens */
+    animation: slide-down 0.5s ease-out; /* Smooth entry animation */
+}
+
+/* Slide-down animation */
+@keyframes slide-down {
+    from { transform: translateY(-100px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+/* Close Button */
+.close {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    color: #555;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.close:hover {
+    color: #000;
+}
+
+/* Modal Header */
+.modal-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.modal-header h2 {
+    font-size: 24px;
+    color: #333;
+    margin: 0;
+    letter-spacing: 1px;
+    font-weight: 600;
+}
+
+/* Back Link Button */
+.modal-header .back-link {
+    position: absolute;
+    top: 15px;
+    left: 20px;
+    color: #555;
+    text-decoration: none;
+    font-size: 16px;
+}
+
+.modal-header .back-link i {
+    margin-right: 5px;
+}
+
+/* Form Input Fields */
+.form-container input {
+    width: 100%;
+    padding: 15px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: #f9f9f9; /* Soft background for inputs */
+    font-size: 16px;
+    box-shadow: inset 1px 1px 5px rgba(0, 0, 0, 0.1); /* Inner shadow for depth */
+    transition: border-color 0.3s ease;
+}
+
+.form-container input:focus {
+    border-color: #58C736; /* Green highlight on focus */
+    outline: none;
+}
+
+/* Input Labels */
+.form-container label {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 8px;
+    display: block;
+    font-weight: 500;
+}
+
+/* Save Changes Button */
+.form-container button {
+    padding: 14px 20px;
+    background: linear-gradient(145deg, #58C736, #47b32a); /* Gradient button */
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    width: 100%;
+    text-align: center;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    margin-top: 15px;
+}
+
+.form-container button:hover {
+    background-color: #47a329;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Shadow on hover */
+}
+
+/* Input field styling for hover */
+.form-container input:hover {
+    border-color: #ccc; /* Subtle hover effect */
+}
+
+/* Additional Styling for Back Button */
+.modal-header .back-link:hover {
+    text-decoration: underline;
+}
+
+/* Input Field Placeholder Styling */
+::placeholder {
+    color: #999;
+    opacity: 0.7;
+}
+
+/* Responsive Design */
+@media (max-width: 500px) {
+    .modal-content {
+        width: 95%; /* Take up more space on smaller screens */
+    }
+}

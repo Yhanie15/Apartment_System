@@ -1,0 +1,92 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: rgba(255, 255, 255, 0.8);
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;  /* Centers horizontally */
+    align-items: center;      /* Centers vertically */
+    height: 100vh;
+}
+
+fieldset {
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    border-radius: 10px;
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.8);
+    width: 100%;
+    max-width: 600px;
+    box-sizing: border-box;
+    margin: 0 auto;  /* Centers the fieldset container */
+}
+
+/* Legend styling */
+legend {
+    font-size: 1.6em;
+    font-weight: bold;
+    color: #000000;
+    padding-top: 100px ; /* Adjusted padding to give space inside the legend box */
+    box-sizing: border-box; /* Ensure padding and border are included in width calculation */
+    position: relative; /* Ensures it behaves as expected with the border */
+}
+
+/* Styles for the form elements */
+form div {
+    margin-bottom: 20px;
+    position: relative;
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 15px;
+    border: 2px solid #ddd;
+    border-radius: 6px;
+    font-size: 1em;
+    background-color: #ffffff; /* White background for input */
+    box-sizing: border-box; /* Ensure padding is included in width calculation */
+}
+
+/* Styles for the submit button */
+button.btnSend {
+    background-color: #007bff;
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    padding: 15px 30px;
+    font-size: 1.2em;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+button.btnSend:hover {
+    background-color: #0056b3;
+}
+
+button.btnSend:active {
+    transform: scale(0.98);
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 768px) {
+    fieldset {
+        padding: 15px;
+        margin: 10px;
+    }
+
+    button.btnSend {
+        width: 100%;
+        padding: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    input[type="text"] {
+        padding: 12px;
+        font-size: 0.9em;
+    }
+
+    button.btnSend {
+        padding: 12px;
+        font-size: 1em;
+    }
+}

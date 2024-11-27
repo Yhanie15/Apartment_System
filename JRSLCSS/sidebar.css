@@ -1,0 +1,160 @@
+/* Default sidebar styles */
+.sidebar {
+    height: 100vh;
+    width: 250px;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #111; /* Sidebar background color */
+    overflow-x: hidden;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 20px;
+    transition: width 0.3s; /* Smooth transition for width change */
+}
+
+/* Links inside the sidebar */
+.sidebar a {
+    padding: 10px 15px;
+    text-decoration: none;
+    font-size: 18px;
+    color: #818181; /* Link color */
+    display: flex;  /* Use flex to align icon and text */
+    align-items: center;  /* Center icon and text vertically */
+}
+
+.sidebar a i {
+    margin-right: 10px;  /* Space between icon and text */
+}
+
+/* Hover effect for sidebar links */
+.sidebar a:hover {
+    color: #f1f1f1;
+}
+
+/* Sidebar header (logo) */
+.sidebar-header {
+    text-align: center;
+    margin-bottom: 20px;
+    padding: 10px 15px;
+    background: #111;
+    color: white;
+}
+
+/* Sidebar unordered list styling */
+.sidebar ul {
+    list-style-type: none;
+    padding: 0;
+    width: 100%;
+}
+
+.sidebar ul li {
+    width: 100%;
+}
+
+/* Styling for links in the sidebar list */
+.sidebar ul li a {
+    display: block;
+    padding: 10px 20px;
+    color: white;
+    text-decoration: none;
+}
+
+/* Hover effect for sidebar list links */
+.sidebar ul li a:hover,
+.sidebar ul li a.active {
+    background-color: #575757; /* Active or hovered link background color */
+}
+
+/* Dropdown Content */
+.sidebar ul li .dropdown-content {
+    display: none;
+    list-style-type: none;
+    padding-left: 15px;
+}
+
+.sidebar ul li .dropdown-content li {
+    padding: 5px 0;
+}
+
+/* Remove hover effect from dropdown items */
+.sidebar ul li a.dropdown:hover {
+    background-color: inherit;
+}
+
+/* Remove hover-based dropdown functionality */
+.sidebar ul li a.dropdown:hover + .dropdown-content {
+    display: none;
+}
+
+/* Dropdown arrow */
+.sidebar ul li .dropdown > a::after {
+    content: '\f078'; /* FontAwesome down arrow */
+    font-family: 'FontAwesome';
+    float: right;
+    padding-right: 10px;
+}
+
+/* Media Queries for Responsiveness */
+@media screen and (max-width: 768px) {
+    .sidebar {
+        width: 200px;
+    }
+
+    .sidebar a {
+        font-size: 16px;
+    }
+}
+
+@media screen and (max-width: 576px) {
+    .sidebar {
+        width: 0;
+        overflow: hidden;
+        transition: width 0.3s; /* Smooth transition for width change */
+    }
+
+    .sidebar.open {
+        width: 200px;
+    }
+
+    .sidebar ul {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .sidebar ul li a {
+        text-align: center;
+    }
+
+    .sidebar-header img {
+        width: 80%;
+    }
+}
+
+/* Optional: Add a toggle button for very small screens */
+#sidebar-toggle {
+    display: none;
+}
+
+@media screen and (max-width: 576px) {
+    #sidebar-toggle {
+        display: block;
+        position: fixed;
+        top: 10px;
+        left: 10px;
+        background-color: #111;
+        color: white;
+        border: none;
+        padding: 10px;
+        cursor: pointer;
+        z-index: 2;
+    }
+
+    #sidebar-toggle.active + .sidebar {
+        width: 200px;
+    }
+}

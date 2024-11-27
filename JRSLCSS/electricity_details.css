@@ -1,0 +1,124 @@
+.main-content {
+    padding: 20px;
+}
+
+.search-section {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.search-section input {
+    width: 70%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.add-payment-btn {
+    background-color: #ff007f;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.add-payment-btn:hover {
+    background-color: #e60072;
+}
+
+.rent-balances-table, .payment-history-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;  /* Adjusted margin to provide space for total balance */
+}
+
+.rent-balances-table th, .payment-history-table th,
+.rent-balances-table td, .payment-history-table td {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: center;
+    
+}
+
+.rent-balances-table th, .payment-history-table th {
+    background-color: #f4f4f4;
+}
+
+/* Styling for total balance to ensure it aligns correctly below the table */
+.total-balance {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 10px;  /* Space between table and total balance display */
+}
+
+.total-balance span {
+    color: green;
+    margin-left: 10px;
+}
+
+/* Modal styling to ensure it covers the screen appropriately when active */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    padding-top: 100px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background-color: #fff;
+    margin: auto;
+    padding: 20px;
+    border-radius: 10px;
+    width: 50%;  /* Modal width to make it centered and appropriately sized */
+    text-align: center;
+}
+
+.close-btn {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    cursor: pointer;
+}
+
+.close-btn:hover {
+    color: black;
+}
+
+.submit-btn, .cancel-btn {
+    background-color: #32CD32;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.cancel-btn {
+    background-color: red;
+}
+
+.cancel-btn:hover {
+    background-color: darkred;
+}
+/* Update for Total Balance styling */
+.total-balance {
+    text-align: left; /* Move to the left */
+    font-size: 18px;
+    font-weight: bold;
+    margin-top: 10px;
+    margin-left: 0; /* Align with the table */
+}
+
+.total-balance span {
+    color: #333;
+}

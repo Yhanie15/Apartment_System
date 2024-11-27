@@ -1,0 +1,241 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap');
+
+
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+body {
+    font-family: "Poppins", sans-serif;
+    background-color: #f5f5f5;
+}
+
+.container {
+    display: flex;
+    height: 100vh;
+}
+
+.sidebar {
+    width: 250px;
+    background-color: #4f4334;
+    color: #fff;
+    padding: 20px;
+}
+
+.logo img {
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 20px;
+}
+
+nav ul {
+    list-style: none;
+}
+
+nav ul li {
+    margin: 20px 0;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: #fff;
+    font-size: 18px;
+    display: block;
+}
+
+.main-content {
+    flex-grow: 1;
+    padding: 20px;
+    position: relative;
+    /* Background image */
+    background: url('img/bg.jpg') no-repeat center center/cover;
+}
+.main-content::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.5); /* White with 50% opacity */
+    z-index: 1; /* Place it on top of the background */
+}
+
+.header, .dashboard-content {
+    position: relative;
+    z-index: 2; /* Ensure the content is above the overlay */
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.header h2 {
+    color: #4f4334;
+    font-size: 24px;
+}
+
+/* Profile section styling */
+.profile {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center the image and link horizontally */
+}
+
+.profile .avatar img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-bottom: 10px; /* Adds space between the image and the link */
+}
+
+.profile a {
+    color: #4f4334;
+    text-decoration: none;
+    font-size: 16px;
+}
+
+/* Edit Profile Link */
+.edit-profile {
+    text-decoration: underline; /* Adds underline to the link */
+    color: #574734; /* Adjust the color to match the design */
+    font-size: 16px;
+}
+
+.edit-profile:hover {
+    color: #333; /* Optional: change the color on hover for better UX */
+}
+
+
+
+
+.dashboard-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+    gap: 20px;
+    height: 400px;
+}
+
+.monthly-bills {
+    grid-column: 1 / 2;
+    grid-row: 1 / 2;
+}
+
+.balances {
+    grid-column: 1 / 2;
+    grid-row: 2 / 3;
+}
+
+.payment-history {
+    grid-column: 2 / 3;
+    grid-row: 1 / 3;
+}
+
+.card {
+    background-color: #4f4334;
+    color: #fff;
+    padding: 20px;
+    text-align: center;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.card h3 {
+    font-size: 18px;
+}
+
+
+/* Overlay Form Styling */
+.overlay-form {
+    display: none; /* Hidden by default */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8); /* Dark overlay background */
+    z-index: 100; /* Overlay on top of everything */
+    padding: 20px;
+    color: #fff;
+    overflow-y: auto;
+}
+
+.overlay-form h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Upload Profile Picture Section */
+.upload-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.upload-section label {
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+
+.upload-section input[type="file"] {
+    font-size: 14px;
+}
+
+/* Form Fields */
+.overlay-form form {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.overlay-form form input[type="text"],
+.overlay-form form input[type="email"],
+.overlay-form form input[type="date"],
+.overlay-form form input[type="number"],
+.overlay-form form select {
+    width: 48%;
+    padding: 10px;
+    margin: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    color: #333;
+}
+
+.overlay-form form button {
+    width: 100%;
+    padding: 12px;
+    background-color: #4f4334;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    border-radius: 5px;
+}
+
+.overlay-form form button:hover {
+    background-color: #3e3427;
+}
+
+/* Close button for overlay */
+.close-btn {
+    position: absolute;
+    top: 20px;
+    right: 40px;
+    font-size: 30px;
+    color: #fff;
+    cursor: pointer;
+}
+
+.close-btn:hover {
+    color: #ddd;
+}
