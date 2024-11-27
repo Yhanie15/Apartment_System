@@ -124,7 +124,6 @@ if (isset($_GET['unit_number'])) {
                         <th>#</th>
                         <th>Date Time Added</th>
                         <th>Month Of</th>
-                        <th>Total Bill</th>
                         <th>Amount Paid</th>
                     </tr>
                 </thead>
@@ -136,7 +135,6 @@ if (isset($_GET['unit_number'])) {
                             <td><?php echo $counter++; ?></td>
                             <td><?php echo htmlspecialchars($row['payment_date']); ?></td>
                             <td><?php echo htmlspecialchars($row['month_of']); ?></td>
-                            <td>PHP <?php echo number_format($row['total_bill'], 2); ?></td>
                             <td>PHP <?php echo number_format($row['amount_paid'], 2); ?></td>
                         </tr>
                     <?php endwhile; ?>

@@ -7,25 +7,54 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Check if a specific unit number is passed
+$previous_reading = 0; // Default value for previous reading
+$is_first_time = true; // Assume it's the first time calculating the bill
+
+// Check if a unit number is provided in the GET request
 if (isset($_GET['unit_number'])) {
     $unit_number = $_GET['unit_number'];
 
+    // Fetch the most recent current reading from the previous calculations
+    $latest_reading_sql = "
+        SELECT current_reading 
+        FROM electricity_calculations 
+        WHERE unit_number = ? 
+        ORDER BY STR_TO_DATE(calculation_month, '%M %Y') DESC, meter_read_date DESC 
+        LIMIT 1
+    ";
+    $stmt = $conn->prepare($latest_reading_sql);
+    $stmt->bind_param('s', $unit_number);
+    $stmt->execute();
+    $stmt->bind_result($previous_reading);
+    if ($stmt->fetch()) {
+        $is_first_time = false; // A record exists; it's not the first time
+    }
+    $stmt->close();
+
     // Fetch payment history for the unit
-    $sql = "SELECT * FROM electricity_payment_history WHERE unit_number = '$unit_number' ORDER BY payment_date DESC";
-    $result = $conn->query($sql);
+    $payment_sql = "
+        SELECT * FROM electricity_payment_history 
+        WHERE unit_number = ? 
+        ORDER BY payment_date DESC
+    ";
+    $stmt = $conn->prepare($payment_sql);
+    $stmt->bind_param('s', $unit_number);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
     // Fetch electricity calculations for the unit (remaining unpaid months)
-    // Exclude already paid months
     $calculation_sql = "
         SELECT * FROM electricity_calculations 
-        WHERE unit_number = '$unit_number' 
+        WHERE unit_number = ? 
         AND calculation_month NOT IN (
-            SELECT month_of FROM electricity_payment_history WHERE unit_number = '$unit_number'
+            SELECT month_of FROM electricity_payment_history WHERE unit_number = ?
         )
-        ORDER BY calculation_month DESC
+        ORDER BY STR_TO_DATE(calculation_month, '%M %Y') DESC, meter_read_date DESC
     ";
-    $calculation_result = $conn->query($calculation_sql);
+    $stmt = $conn->prepare($calculation_sql);
+    $stmt->bind_param('ss', $unit_number, $unit_number);
+    $stmt->execute();
+    $calculation_result = $stmt->get_result();
 }
 ?>
 
@@ -56,20 +85,24 @@ if (isset($_GET['unit_number'])) {
             <table class="payment-table">
                 <thead>
                     <tr>
-                        <th>Calculation Month</th>
-                        <th>Electicity Rate (PHP per cubic)</th>
-                        <th>Electicity Consumption (cubics)</th>
-                        <th>Electicity Bill (PHP)</th>
+                    <th>Calculation Month</th>
+                        <th>Previous Reading</th>
+                        <th>Current Reading</th>
+                        <th>Total Consumption (gallons)</th>
+                        <th>Electicity Rate</th>
+                        <th>Total Bill</th>
                         <th>Meter Read Date</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php while ($calculation_row = $calculation_result->fetch_assoc()): ?>
                         <tr>
-                            <td><?php echo htmlspecialchars($calculation_row['calculation_month']); ?></td>
+                        <td><?php echo htmlspecialchars($calculation_row['calculation_month']); ?></td>
+                            <td><?php echo htmlspecialchars($calculation_row['previous_reading']); ?></td>
+                            <td><?php echo htmlspecialchars($calculation_row['current_reading']); ?></td>
+                            <td><?php echo htmlspecialchars($calculation_row['current_reading'] - $calculation_row['previous_reading']); ?></td>
                             <td>PHP <?php echo number_format($calculation_row['electricity_rate'], 2); ?></td>
-                            <td><?php echo htmlspecialchars($calculation_row['electricity_consumption']); ?></td>
-                            <td>PHP <?php echo number_format($calculation_row['electricity_bill'], 2); ?></td>
+                            <td>PHP <?php echo number_format(($calculation_row['current_reading'] - $calculation_row['previous_reading']) * $calculation_row['electricity_rate'], 2); ?></td>
                             <td><?php echo htmlspecialchars($calculation_row['meter_read_date']); ?></td>
                         </tr>
                     <?php endwhile; ?>
@@ -109,32 +142,41 @@ if (isset($_GET['unit_number'])) {
     </div>
 
     <!-- Modal for Calculating Electricity Bill -->
-<div class="compute_modal" id="computeModal">
+    <div class="compute_modal" id="computeModal">
     <div class="modal-content">
         <h3>Calculate Electicity for Room <?php echo htmlspecialchars($unit_number); ?></h3>
         <form method="POST" action="compute_electricity.php">
-            <label>Unit Number:</label>
-            <input type="text" name="unit_number" value="<?php echo htmlspecialchars($unit_number); ?>" required><br>
+    <label>Unit Number:</label>
+    <input type="text" name="unit_number" value="<?php echo htmlspecialchars($unit_number); ?>" readonly required><br>
 
-            <label>Electicity Rate (PHP per cubic):</label>
-            <input type="text" name="electricity_rate" required><br>
+    <label>Previous Reading:</label>
+    <input 
+        type="number" 
+        name="previous_reading" 
+        value="<?php echo htmlspecialchars($previous_reading); ?>" 
+        <?php echo $is_first_time ? '' : 'readonly'; ?> 
+        step="0.01" 
+        required
+    ><br>
 
-            <label>Electicity Consumption (cubics):</label>
-            <input type="text" name="electricity_consumption" required><br>
+    <label>Current Reading:</label>
+    <input type="number" name="current_reading" step="0.01" required><br>
 
-            <label>Meter Read Date:</label>
-            <input type="date" name="meter_read_date" required><br>
+    <label>Electicity Rate (PHP per gallon):</label>
+    <input type="number" name="electricity_rate" step="0.01" required><br>
 
-            <!-- Add month picker for Calculation Month -->
-            <label>Calculation Month:</label>
-            <input type="month" name="calculation_month" required><br>
+    <label>Meter Read Date:</label>
+    <input type="date" name="meter_read_date" required><br>
 
-            <button type="submit" class="green-button">Calculate</button>
-        </form>
+    <label>Calculation Month:</label>
+    <input type="month" name="calculation_month" required><br>
+
+    <button type="submit" class="green-button">Calculate</button>
+</form>
+
         <button class="back-button" onclick="closeModal('computeModal')">Back to Electicity</button>
     </div>
 </div>
-
     <!-- Modal for Updating Payment -->
     <div class="payment_modal" id="updateModal">
         <div class="modal-content">
