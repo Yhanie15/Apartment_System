@@ -118,10 +118,9 @@ nav ul li a {
 
 .dashboard-content {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto auto;
-    gap: 20px;
-    height: 400px;
+    grid-template-columns: repeat(2, 1fr); /* Two columns of equal width */
+    grid-template-rows: auto auto; /* Adjust rows dynamically */
+    gap: 20px; /* Space between cards */
 }
 
 .monthly-bills {
@@ -140,16 +139,22 @@ nav ul li a {
 }
 
 .card {
-    background-color: #4f4334;
-    color: #fff;
+    background-color: #4f4334; /* Dark background color */
+    color: #fff; /* Light text */
     padding: 20px;
     text-align: center;
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
 }
 
 .card h3 {
     font-size: 18px;
+    margin-bottom: 10px; /* Space below the heading */
+}
+
+.card p {
+    font-size: 16px;
+    margin: 5px 0; /* Space between paragraphs */
 }
 
 
@@ -238,4 +243,60 @@ nav ul li a {
 
 .close-btn:hover {
     color: #ddd;
+}
+
+.table-container {
+    max-height: 200px; /* Set a fixed height for the table container */
+    overflow-y: auto; /* Enable vertical scrolling */
+    border: 1px solid #ddd; /* Optional: Add a border around the scrollable area */
+    border-radius: 8px; /* Rounded corners for the scroll container */
+    background-color: #fff; /* Ensure a light background for better readability */
+}
+
+.table-container table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table-container table thead {
+    position: sticky; /* Keep the header fixed when scrolling */
+    top: 0; /* Stick to the top of the container */
+    z-index: 1; /* Ensure it appears above the rows */
+    background-color: #4f4334; /* Matches the table header background color */
+    color: #fff;
+}
+
+.table-container table th,
+.table-container table td {
+    text-align: center;
+    padding: 12px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+}
+
+.table-container table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+    color: #333;
+}
+.table-container table tbody tr:nth-child(odd) {
+    background-color: #f9f9f9;
+    color: #333;
+}
+
+.table-container table tbody tr:hover {
+    background-color: #f1f1f1;
+}
+.balances-section {
+    display: flex;
+    flex-direction: column; /* Stack the two cards vertically */
+    gap: 20px; /* Space between the two cards */
+}
+@media (max-width: 768px) {
+    .dashboard-content {
+        grid-template-columns: 1fr; /* One column layout for smaller screens */
+    }
+
+    .balances-section {
+        flex-direction: row; /* Make the cards sit side by side on smaller screens */
+    }
 }
