@@ -226,11 +226,14 @@ $total_balance_due = $total_water_due + $total_electricity_due + $balance;
     <div class="balances card">
         <h3>Total Balances</h3>
         <p>PHP <?php echo number_format($total_balance_due, 2); ?></p>
-        <button onclick="generateReceipt()">Generate Receipt</button>
+        <button onclick="openReceiptModal()">Generate Receipt</button>
+        
     </div>
 
-    <!-- Receipt Section (Hidden by Default) -->
-    <div id="receiptSection" style="display: none; margin-top: 20px; background: #fff; padding: 15px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);">
+   <!-- Modal for Receipt Section -->
+<div id="receiptModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeReceiptModal()">&times;</span>
         <h3>Balance Summary</h3>
 
         <!-- Water Bills -->
@@ -275,51 +278,84 @@ $total_balance_due = $total_water_due + $total_electricity_due + $balance;
     </div>
 </div>
 
+<style>
+    /* Modal Styles */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.5);
+    }
 
+    .modal-content {
+        background-color: #fff;
+        margin: 10% auto;
+        padding: 20px;
+        border-radius: 8px;
+        width: 50%;
+        position: relative;
+        text-align: center;
+    }
 
-        </div>
-    </div>
+    .close {
+        position: absolute;
+        top: 10px;
+        right: 20px;
+        color: #aaa;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+    }
 
-    <script>
-        function showForm() {
-            document.getElementById("overlayForm").style.display = "block";
-        }
+    .close:hover,
+    .close:focus {
+        color: #000;
+        text-decoration: none;
+        cursor: pointer;
+    }
+</style>
 
-        function hideForm() {
-            document.getElementById("overlayForm").style.display = "none";
-        }
+<script>
+    // Open the modal
+    function openReceiptModal() {
+        document.getElementById("receiptModal").style.display = "block";
+    }
 
-        // Show the receipt section
-    function generateReceipt() {
-        const receiptSection = document.getElementById("receiptSection");
-        receiptSection.style.display = "block"; // Make the receipt visible
+    // Close the modal
+    function closeReceiptModal() {
+        document.getElementById("receiptModal").style.display = "none";
     }
 
     // Print the receipt
     function printReceipt() {
-        const receiptContent = document.getElementById("receiptSection").innerHTML;
+        const modalContent = document.querySelector(".modal-content").innerHTML;
         const printWindow = window.open('', '_blank');
-        printWindow.document.open();
         printWindow.document.write(`
             <html>
                 <head>
                     <title>Receipt</title>
                     <style>
-                        body { font-family: Arial, sans-serif; margin: 20px; }
-                        h3, h4 { text-align: center; }
+                        body { font-family: Arial, sans-serif; margin: 20px; text-align: center; }
                         p, li { margin: 5px 0; }
                         ul { list-style-type: none; padding: 0; }
                         hr { margin: 10px 0; }
                     </style>
                 </head>
-                <body>
-                    ${receiptContent}
-                </body>
+                <body>${modalContent}</body>
             </html>
         `);
         printWindow.document.close();
         printWindow.print();
     }
-    </script>
+</script>
+
+<!-- Trigger Button -->
+
+
 </body>
 </html>
