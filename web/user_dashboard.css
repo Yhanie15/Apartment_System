@@ -291,6 +291,65 @@ nav ul li a {
     flex-direction: column; /* Stack the two cards vertically */
     gap: 20px; /* Space between the two cards */
 }
+.overlay-form {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 1000;
+    padding: 20px;
+    color: #fff;
+    overflow-y: auto;
+}
+
+.overlay-form h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.overlay-form textarea {
+    width: 80%;
+    height: 100px;
+    margin-bottom: 20px;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+}
+
+.overlay-form input[type="file"] {
+    margin-bottom: 20px;
+}
+
+.overlay-form button {
+    padding: 10px 20px;
+    background-color: #4f4334;
+    color: #fff;
+    font-size: 18px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.overlay-form button:hover {
+    background-color: #3e3427;
+}
+
+.close-btn {
+    position: absolute;
+    top: 20px;
+    right: 40px;
+    font-size: 30px;
+    color: #fff;
+    cursor: pointer;
+}
+
+.close-btn:hover {
+    color: #ddd;
+}
+
 @media (max-width: 768px) {
     .dashboard-content {
         grid-template-columns: 1fr; /* One column layout for smaller screens */
@@ -300,3 +359,5 @@ nav ul li a {
         flex-direction: row; /* Make the cards sit side by side on smaller screens */
     }
 }
+
+

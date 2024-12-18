@@ -205,6 +205,8 @@ nav {
     text-decoration: underline;
 }
 
+
+
 /* Adjust form responsiveness */
 @media (max-width: 768px) {
     .login-container {

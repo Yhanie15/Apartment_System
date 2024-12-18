@@ -123,6 +123,7 @@ $total_balance_due = $total_water_due + $total_electricity_due + $balance;
                     <li><a href="#">Dashboard</a></li>
                     <li><a href="#"> Rent & Bills History</a></li>
                     <li><a href="#">Payment History</a></li>
+                    <li><a href="#" onclick="showReportForm()">Report Problem</a></li>
                     <li><a href="logout.php">Log Out</a></li>
                 </ul>
             </nav>
@@ -220,17 +221,74 @@ $total_balance_due = $total_water_due + $total_electricity_due + $balance;
     </div>
 </div>
 
-
-                <!-- Balances Card -->
-                <div class="balances-section">
+<!-- Balances Card -->
+<div class="balances-section">
     <div class="balances card">
         <h3>Total Balances</h3>
         <p>PHP <?php echo number_format($total_balance_due, 2); ?></p>
         <button onclick="openReceiptModal()">Generate Receipt</button>
         
     </div>
+                </div>
 
-   <!-- Modal for Receipt Section -->
+                
+            </div>
+        </div>
+    </div>
+
+    <!-- Overlay Form -->
+    <div id="overlayForm" class="overlay-form">
+        <h2>Edit Profile</h2>
+        
+        <!-- Upload Profile Picture Section -->
+        <div class="upload-section">
+            <label for="profile_picture">Upload Profile Picture</label>
+            <input type="file" id="profile_picture" name="profile_picture">
+        </div>
+
+        <form method="POST" action="update_profile.php" enctype="multipart/form-data">
+            <input type="hidden" name="user_id" value="<?php echo htmlspecialchars($user_id); ?>">
+
+            <input type="text" name="first_name" value="<?php echo htmlspecialchars($user['first_name']); ?>" placeholder="First Name *" required>
+            <input type="text" name="last_name" value="<?php echo htmlspecialchars($user['last_name']); ?>" placeholder="Last Name *" required>
+            <input type="text" name="middle_name" value="<?php echo htmlspecialchars($user['middle_name']); ?>" placeholder="Middle Name">
+            <input type="text" name="ext_name" value="<?php echo htmlspecialchars($user['ext_name']); ?>" placeholder="Extension Name">
+            <input type="date" name="birth_date" value="<?php echo htmlspecialchars($user['birth_date']); ?>" placeholder="Date of Birth *" required>
+            <select name="gender" required>
+                <option value="">Gender *</option>
+                <option value="Male" <?php echo ($user['gender'] == 'Male') ? 'selected' : ''; ?>>Male</option>
+                <option value="Female" <?php echo ($user['gender'] == 'Female') ? 'selected' : ''; ?>>Female</option>
+            </select>
+            <input type="number" name="age" value="<?php echo htmlspecialchars($user['age']); ?>" placeholder="Age *" required>
+            <input type="text" name="address" value="<?php echo htmlspecialchars($user['address']); ?>" placeholder="Address *" required>
+            <input type="email" name="email" value="<?php echo htmlspecialchars($user['email']); ?>" placeholder="Email *" required>
+            <input type="text" name="phone_number" value="<?php echo htmlspecialchars($user['phone']); ?>" placeholder="Phone Number *" required>
+            <input type="text" name="emergency_contact_name" value="<?php echo htmlspecialchars($user['emergency_contact_name']); ?>" placeholder="Emergency Contact Name *" required>
+            <input type="text" name="relationship" value="<?php echo htmlspecialchars($user['relationship']); ?>" placeholder="Relationship *" required>
+            <input type="text" name="emergency_contact_number" value="<?php echo htmlspecialchars($user['emergency_contact_number']); ?>" placeholder="Emergency Contact Number *" required>
+            <button type="submit">Save</button>
+        </form>
+        <span class="close-btn" onclick="hideForm()">&times;</span>
+    </div>
+
+    <!-- Report Problem Overlay Form -->
+<div id="report-form" class="overlay-form">
+    <span class="close-btn" onclick="closeReportForm()">&times;</span>
+    <h2>Report a Problem</h2>
+    <form action="submit_report.php" method="post" enctype="multipart/form-data">
+        <div class="input-group">
+            <label for="details">Details:</label>
+            <textarea id="details" name="details" placeholder="Describe your problem..." required></textarea>
+        </div>
+        <div class="input-group">
+            <label for="image">Upload Image:</label>
+            <input type="file" id="image" name="image" accept="image/*" required>
+        </div>
+        <button type="submit">Submit Report</button>
+    </form>
+</div>
+
+<!-- Modal for Receipt Section -->
 <div id="receiptModal" class="modal">
     <div class="modal-content">
         <span class="close" onclick="closeReceiptModal()">&times;</span>
@@ -320,8 +378,8 @@ $total_balance_due = $total_water_due + $total_electricity_due + $balance;
     }
 </style>
 
-<script>
-    // Open the modal
+    <script>
+        // Open the modal
     function openReceiptModal() {
         document.getElementById("receiptModal").style.display = "block";
     }
@@ -352,10 +410,14 @@ $total_balance_due = $total_water_due + $total_electricity_due + $balance;
         printWindow.document.close();
         printWindow.print();
     }
-</script>
 
-<!-- Trigger Button -->
+    function showReportForm() {
+    document.getElementById("report-form").style.display = "block";
+}
 
-
+function closeReportForm() {
+    document.getElementById("report-form").style.display = "none";
+}
+    </script>
 </body>
 </html>
