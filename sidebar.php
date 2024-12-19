@@ -16,7 +16,7 @@
     <div class="sidebar">
         <div class="sidebar-header">
             <!-- Logo or Header Image -->
-            <img src="images/jrsl logo without bg1.png" alt="Description of the image" style="width:70%; height:auto;">
+            <img src="images/logo.png" alt="Description of the image" style="width:90%; height:auto;">
         </div>
         <ul>
             <!-- Sidebar Menu Items with Icons -->

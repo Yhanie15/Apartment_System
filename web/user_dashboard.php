@@ -2,6 +2,8 @@
 session_start();
 include '../db.php';
 
+
+
 // Check if the user is logged in
 if (!isset($_SESSION['user_id'])) {
     header("Location: web/login.php");
@@ -100,6 +102,15 @@ foreach ($electricity_bills as $bill) {
 // Calculate total balance due
 $total_balance_due = $total_water_due + $total_electricity_due + $balance;
 
+// Fetch reports for the logged-in tenant
+$stmt = $pdo->prepare("
+    SELECT id, report_details, image_path, created_at, status 
+    FROM reports 
+    WHERE tenant_id = ? 
+    ORDER BY created_at DESC
+");
+$stmt->execute([$user_id]);
+$reports = $stmt->fetchAll();
 ?>
 
 <!DOCTYPE html>
@@ -114,20 +125,28 @@ $total_balance_due = $total_water_due + $total_electricity_due + $balance;
 </head>
 <body>
     <div class="container">
-        <div class="sidebar">
-            <div class="logo">
-                <img src="img/jrsl_logo.png" alt="JRSL Logo">
-            </div>
-            <nav>
-                <ul>
-                    <li><a href="#">Dashboard</a></li>
-                    <li><a href="#"> Rent & Bills History</a></li>
-                    <li><a href="#">Payment History</a></li>
+
+    <div class="sidebar">
+    <div class="logo">
+        <img src="img/logo.png" alt="JRSL Logo">
+    </div>
+    <nav>
+        <ul>
+            <li><a href="#">Dashboard</a></li>
+            <li><a href="#">Rent & Bills History</a></li>
+            <li><a href="#">Payment History</a></li>
+            <li>
+                <a href="#" onclick="toggleMaintenanceMenu()">Maintenance</a>
+                <ul class="submenu" id="maintenanceMenu">
                     <li><a href="#" onclick="showReportForm()">Report Problem</a></li>
-                    <li><a href="logout.php">Log Out</a></li>
+                    <li><a href="#" onclick="showReportHistory()">Report History</a></li>
                 </ul>
-            </nav>
-        </div>
+            </li>
+            <li><a href="logout.php">Log Out</a></li>
+        </ul>
+    </nav>
+</div>
+
         <div class="main-content">
             <div class="header">
                 <h2>Welcome to Room #<?php echo htmlspecialchars($user['unit_number']); ?>, <?php echo htmlspecialchars($user['username']); ?>!</h2>
@@ -288,6 +307,63 @@ $total_balance_due = $total_water_due + $total_electricity_due + $balance;
     </form>
 </div>
 
+<!-- Report Problem Form -->
+<div id="report-form" class="overlay-form" style="display:none;">
+    <span class="close-btn" onclick="closeReportForm()">&times;</span>
+    <h2>Report a Problem</h2>
+    <form action="submit_report.php" method="post" enctype="multipart/form-data">
+        <div class="input-group">
+            <label for="details">Details:</label>
+            <textarea id="details" name="details" placeholder="Describe your problem..." required></textarea>
+        </div>
+        <div class="input-group">
+            <label for="image">Upload Image:</label>
+            <input type="file" id="image" name="image" accept="image/*" required>
+        </div>
+        <button type="submit">Submit Report</button>
+    </form>
+</div>
+
+<!-- Report History -->
+<div id="report-history" class="overlay-form">
+    <span class="close-btn" onclick="closeReportHistory()">&times;</span>
+    <h2>Report History</h2>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Details</th>
+                    <th>Image</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if (count($reports) > 0): ?>
+                    <?php foreach ($reports as $report): ?>
+                        <tr>
+                            <td><?php echo htmlspecialchars($report['created_at']); ?></td>
+                            <td><?php echo htmlspecialchars($report['report_details']); ?></td>
+                            <td>
+                                <?php if (!empty($report['image_path'])): ?>
+                                    <a href="<?php echo htmlspecialchars($report['image_path']); ?>" target="_blank">View</a>
+                                <?php else: ?>
+                                    N/A
+                                <?php endif; ?>
+                            </td>
+                            <td><?php echo htmlspecialchars($report['status']); ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <tr>
+                        <td colspan="4">No reports found.</td>
+                    </tr>
+                <?php endif; ?>
+            </tbody>
+        </table>
+    </div>
+</div>
+
 <!-- Modal for Receipt Section -->
 <div id="receiptModal" class="modal">
     <div class="modal-content">
@@ -379,6 +455,12 @@ $total_balance_due = $total_water_due + $total_electricity_due + $balance;
 </style>
 
     <script>
+
+    // Toggle Maintenance Menu
+function toggleMaintenanceMenu() {
+        const menu = document.getElementById("maintenanceMenu");
+        menu.style.display = menu.style.display === "block" ? "none" : "block";
+    }
         // Open the modal
     function openReceiptModal() {
         document.getElementById("receiptModal").style.display = "block";
@@ -418,6 +500,25 @@ $total_balance_due = $total_water_due + $total_electricity_due + $balance;
 function closeReportForm() {
     document.getElementById("report-form").style.display = "none";
 }
+    // Show Report Form
+    function showReportForm() {
+        document.getElementById("report-form").style.display = "block";
+    }
+
+    // Close Report Form
+    function closeReportForm() {
+        document.getElementById("report-form").style.display = "none";
+    }
+
+    // Show Report History
+    function showReportHistory() {
+        document.getElementById("report-history").style.display = "block";
+    }
+
+    // Close Report History
+    function closeReportHistory() {
+        document.getElementById("report-history").style.display = "none";
+    }
     </script>
 </body>
 </html>
