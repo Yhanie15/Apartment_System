@@ -1,6 +1,6 @@
 <?php
 session_start();
-require '../config.php'; // Adjusted path to config.php
+include '../db.php';
 
 $error = '';
 

@@ -11,13 +11,11 @@ if (!isset($_SESSION['username'])) {
 include 'db.php'; // Include db.php for $pdo connection
 
 // Fetch reports data along with tenant information
-$stmt = $pdo->query("
-    SELECT r.id, r.report_details, r.image_path, r.created_at, 
-           t.unit_number, t.first_name, t.last_name 
-    FROM reports r
-    JOIN tenant_account t ON r.tenant_id = t.id
-    ORDER BY r.created_at DESC
-");
+$stmt = $pdo->query("SELECT r.id, r.report_details, r.image_path, r.created_at, t.unit_number, t.first_name, t.last_name 
+                     FROM reports r 
+                     JOIN tenant_account t ON r.tenant_id = t.id 
+                     WHERE r.archived = FALSE 
+                     ORDER BY r.created_at DESC");
 $reports = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
@@ -30,6 +28,85 @@ $reports = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="JRSLCSS/maintenance.css"> <!-- Custom CSS for Maintenance -->
+    <style>
+        .report-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .report-card {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.3s ease;
+        }
+
+        .report-card:hover {
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .report-card h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .report-card p {
+            font-size: 16px;
+            margin-bottom: 8px;
+            color: #555;
+        }
+
+        .image-container {
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .image-container img {
+            width: 2in; 
+            height: 2in; 
+            object-fit: cover; 
+            border-radius: 4px; 
+            border: 1px solid #ddd;
+            cursor: pointer;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .overlay img {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 8px;
+        }
+
+        .overlay .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #fff;
+            color: #000;
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
 
@@ -62,7 +139,7 @@ $reports = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <p><strong>Details:</strong> <?php echo htmlspecialchars($report['report_details']); ?></p>
                         <p><strong>Submitted On:</strong> <?php echo htmlspecialchars($report['created_at']); ?></p>
                         <div class="image-container">
-                            <img src="<?php echo htmlspecialchars($report['image_path']); ?>" alt="Report Image">
+                            <img src="<?php echo htmlspecialchars($report['image_path']); ?>" alt="Report Image" onclick="showOverlay('<?php echo htmlspecialchars($report['image_path']); ?>')">
                         </div>
                         <div class="report-actions">
                             <button class="button resolve-button" onclick="markResolved(<?php echo $report['id']; ?>)">Mark as Resolved</button>
@@ -73,6 +150,11 @@ $reports = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <p>No reports found.</p>
             <?php endif; ?>
         </div>
+    </div>
+
+    <div class="overlay" id="imageOverlay">
+        <span class="close-btn" onclick="closeOverlay()">&times;</span>
+        <img id="overlayImage" src="" alt="Full View">
     </div>
 
     <script>
@@ -104,6 +186,18 @@ $reports = $stmt->fetchAll(PDO::FETCH_ASSOC);
             if (confirm("Are you sure you want to mark this report as resolved?")) {
                 window.location.href = `resolve_report.php?id=${id}`;
             }
+        }
+
+        function showOverlay(imagePath) {
+            var overlay = document.getElementById('imageOverlay');
+            var overlayImage = document.getElementById('overlayImage');
+            overlayImage.src = imagePath;
+            overlay.style.display = 'flex';
+        }
+
+        function closeOverlay() {
+            var overlay = document.getElementById('imageOverlay');
+            overlay.style.display = 'none';
         }
     </script>
 </body>

@@ -36,18 +36,16 @@ try {
     <title>Rental Payment Report</title>
 </head>
 <body>
-    <div class="container">
+<?php include 'sidebar.php'; ?>
+    <div class="main-content">
         <h1>Rental Payment Report</h1>
-        <div class="back-button">
-    <a href="dashboard.php" class="back-btn">Back to Dashboard</a>
-        </div>
+        
         <table>
             <thead>
                 <tr>
                     <th>ID</th>
                     <th>Unit Number</th>
                     <th>Payment Date</th>
-                    <th>Amount</th>
                     <th>Amount Paid</th>
                 
                 </tr>
@@ -59,9 +57,7 @@ try {
                         <td><?php echo htmlspecialchars($payment['id']); ?></td>
                         <td><?php echo htmlspecialchars($payment['unit_number']); ?></td>
                         <td><?php echo htmlspecialchars($payment['payment_date']); ?></td>
-                        <td><?php echo htmlspecialchars($payment['amount']); ?></td>
                         <td><?php echo htmlspecialchars($payment['amount_paid']); ?></td>
-                        <td><?php echo htmlspecialchars(number_format($payment['amount'], 2)); ?></td>
                     </tr>
                     <?php endforeach; ?>
                 <?php else: ?>

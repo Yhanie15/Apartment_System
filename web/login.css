@@ -204,6 +204,43 @@ nav {
 .login-form a:hover {
     text-decoration: underline;
 }
+.toggle-container {
+    text-align: center;
+    margin-bottom: 20px;
+}
+.toggle-btn {
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    padding: 5px 15px;
+    background-color: #f4d03f;
+    border-radius: 20px;
+    font-size: 14px;
+    margin: 0 10px;
+}
+.toggle-btn input {
+    display: none;
+}
+.toggle-btn span {
+    margin-left: 10px;
+    font-weight: bold;
+}
+.input-group {
+position: relative;
+display: flex;
+align-items: center;
+}
+#toggle-password {
+position: absolute;
+right: 10px;
+top: 50%;
+transform: translateY(-50%);
+color: #333;
+font-size: 18px;
+}
+#toggle-password:hover {
+color: #000;
+}
 
 
 

@@ -36,7 +36,7 @@
             
             <li><a href="maintenance.php"><i class="fas fa-screwdriver"></i> Maintenance</a></li>
             <li><a href="reports.php"><i class="fas fa-chart-line"></i> Reports</a></li>
-            <li><a href="login/logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+            <li><a href="web/home.php"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
         </ul>
     </div>
 

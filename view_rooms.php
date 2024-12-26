@@ -11,13 +11,7 @@ if (!isset($_SESSION['username'])) {
 include 'db.php'; // Include db.php to get $pdo connection
 
 // Fetch rooms data along with tenant information (to detect if room is occupied)
-$stmt = $pdo->query("
-    SELECT r.id, r.unit_number, r.rent, r.capacity, r.room_type, 
-           COUNT(t.id) AS tenant_count
-    FROM rooms r
-    LEFT JOIN tenant_account t ON r.unit_number = t.unit_number
-    GROUP BY r.id
-");
+$stmt = $pdo->query("SELECT r.id, r.unit_number, r.rent, r.capacity, r.room_type, COUNT(t.id) AS tenant_count FROM rooms r LEFT JOIN tenant_account t ON r.unit_number = t.unit_number GROUP BY r.id ORDER BY r.unit_number ASC");
 $rooms = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 ?>
@@ -30,7 +24,7 @@ $rooms = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <title>View Rooms</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="JRSLCSS/view_rooms.css"> <!-- Updated to new_design.css -->
+    <link rel="stylesheet" href="JRSLCSS/view_rooms.css">
 </head>
 <body>
 
@@ -51,7 +45,7 @@ $rooms = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <option value="all">All Rooms</option>
                 <option value="solo">Solo Room</option>
                 <option value="small">Small Room</option>
-                <option value="medium">Medium Room</option> <!-- Added Medium Room -->
+                <option value="medium">Medium Room</option>
                 <option value="large">Large Room</option>
             </select>
 
@@ -67,8 +61,15 @@ $rooms = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <div class="room-grid" id="roomGrid">
             <?php foreach ($rooms as $room): ?>
                 <?php 
-                    // Determine room status based on tenant count
-                    $status = $room['tenant_count'] > 0 ? 'occupied' : 'available';
+                    // Determine room status and availability
+                    $availableSlots = $room['capacity'] - $room['tenant_count'];
+                    if ($availableSlots > 0) {
+                        $status = 'available';
+                        $availabilityText = "Available ($availableSlots slot" . ($availableSlots > 1 ? 's' : '') . ")";
+                    } else {
+                        $status = 'occupied';
+                        $availabilityText = "Occupied";
+                    }
                 ?>
                 <div class="room-card" 
                      data-room-type="<?php echo htmlspecialchars($room['room_type']); ?>"
@@ -77,7 +78,7 @@ $rooms = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <p><i class="fas fa-dollar-sign"></i> <?php echo htmlspecialchars($room['rent']); ?></p>
                     <p><i class="fas fa-users"></i> Capacity: <?php echo htmlspecialchars($room['capacity']); ?></p>
                     <p><i class="fas fa-door-open"></i> Type: <?php echo htmlspecialchars($room['room_type']); ?></p>
-                    <p>Status: <?php echo ucfirst($status); ?></p> <!-- Display room status -->
+                    <p><i class="fas fa-info-circle"></i> Status: <?php echo htmlspecialchars($availabilityText); ?></p> <!-- Display room status and availability with icon -->
                     <div class="room-actions">
                         <a href="view_room.php?id=<?php echo $room['id']; ?>" class="button view-button">View</a>
                         <button class="button delete-button" onclick="confirmDelete(<?php echo $room['id']; ?>)">Delete</button>
